@@ -8,12 +8,10 @@ st.set_page_config(page_title="Predicting Steel Column Response at Elevated Temp
 
 page_bg_color = """
 <style>
-/* Đổi màu nền chính và làm trong suốt header */
 [data-testid="stAppViewContainer"] { background-color: #F4F8FA !important; }
 [data-testid="stHeader"] { background-color: rgba(0,0,0,0) !important; }
 h1, h2, h3, h4, h5, h6, p, span, div, label { color: #2C3E50 !important; }
 
-/* 1. NÚT DỰ ĐOÁN */
 div.stButton > button:first-child {
     background-color: #2E86C1 !important;
     color: white !important; 
@@ -25,7 +23,6 @@ div.stButton > button:first-child:hover {
     color: white !important;
 }
 
-/* 2. NÚT TẢI DỮ LIỆU (Phong cách Gradient nảy) */
 [data-testid="stDownloadButton"] button {
     background: linear-gradient(135deg, #3498db, #2980b9) !important;
     color: white !important;
@@ -35,11 +32,10 @@ div.stButton > button:first-child:hover {
     transition: all 0.2s ease;
 }
 
-/* Khi di chuột vào nút tải dữ liệu */
 [data-testid="stDownloadButton"] button:hover {
     background: linear-gradient(135deg, #2980b9, #3498db) !important;
-    box-shadow: 0 6px 12px rgba(41, 128, 185, 0.3); /* Bóng đổ to hơn */
-    transform: translateY(-2px); /* Hiệu ứng nảy nút lên 2 pixel */
+    box-shadow: 0 6px 12px rgba(41, 128, 185, 0.3);
+    transform: translateY(-2px);
     color: white !important;
 }
 </style>
@@ -125,45 +121,28 @@ if st.button("PLOTTING RESULTS", type="primary", use_container_width=True):
             import matplotlib.font_manager as fm
             from matplotlib.ticker import MultipleLocator
             
-            # Cấu hình font chữ chuẩn bài báo
             plt.rcParams['font.family'] = 'serif'
             plt.rcParams['font.serif'] = ['Times New Roman']
             plt.rcParams['mathtext.fontset'] = 'stix' 
             
             fig, ax = plt.subplots(figsize=(7, 5))
             
-            # Vẽ đường cong dự đoán
             ax.plot(di_range, pi_pred, color='Red', linestyle='-', linewidth=1.5, label='XGBoost Surrogate')
             
-            # Ép khung tọa độ không vượt quá giới hạn giá trị thực tế
             max_force = np.max(pi_pred)
             ax.set_xlim(0, max_di)
-            ax.set_ylim(0, max_force * 1.05) # Dư 5% ở trên để đỉnh không dính viền
-            
-            # Cài đặt nhãn trục
+            ax.set_ylim(0, max_force * 1.05)
             ax.set_xlabel('Axial Displacement, $d_i$ (mm)', fontsize=12)
             ax.set_ylabel('Axial Force, $P_i$ (kN)', fontsize=12)
-            
-            # Cài đặt bước nhảy (major tick) cho trục di (trục hoành) là 3mm
             ax.xaxis.set_major_locator(MultipleLocator(3))
-            
-            # Tick mark hướng vào trong, chỉ để ở dưới và trái
             ax.tick_params(axis='both', which='major', labelsize=11, direction='in', length=5, width=1, top=False, right=False)
-            
-            # Thêm gridline mờ
             ax.grid(True, which='major', linestyle='--', color='gray', alpha=0.3)
-            
-            # Ẩn viền của hộp chú thích
             ax.legend(loc='best', frameon=False, fontsize=11)
-            
-            # Định dạng lại độ dày của khung đồ thị
+
             for spine in ax.spines.values():
                 spine.set_linewidth(1.0)
-                spine.set_color('black')
-                
+                spine.set_color('black')                
             fig.tight_layout()
-            
-            # Hiển thị trên Streamlit
             st.pyplot(fig)
                         
         with res_col2:
@@ -178,7 +157,7 @@ if st.button("PLOTTING RESULTS", type="primary", use_container_width=True):
             st.download_button(
                 label="📥 Download Data (.csv)",
                 data=csv,
-                file_name=f'Force_Displacement_Curve_T{T_in}_L{L_in}.csv',
+                file_name=f'Force_Displacement_Curve.csv',
                 mime='text/csv',
                 use_container_width=True
             )
