@@ -12,30 +12,32 @@ page_bg_color = """
 [data-testid="stHeader"] { background-color: rgba(0,0,0,0) !important; }
 h1, h2, h3, h4, h5, h6, p, span, div, label { color: #2C3E50 !important; }
 
+<style>
+/* Nút PLOTTING RESULTS */
 div.stButton > button:first-child {
     background-color: #2E86C1 !important;
-    color: white !important; 
+    color: white !important; /* Chỉnh màu cho nút cha */
     border: none;
     border-radius: 6px;
+    font-weight: 800 !important;
+    font-size: 18px !important;
 }
-div.stButton > button:first-child:hover {
-    background-color: #1B4F72 !important;
+/* Ép màu cho chữ bên trong nút (phần tử con) */
+div.stButton > button:first-child p {
     color: white !important;
 }
 
+/* Nút DOWNLOAD */
 [data-testid="stDownloadButton"] button {
     background: linear-gradient(135deg, #3498db, #2980b9) !important;
-    color: white !important;
+    color: white !important; /* Chỉnh màu cho nút cha */
     border: none !important;
     border-radius: 6px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: all 0.2s ease;
+    font-weight: 700 !important;
+    font-size: 16px !important;
 }
-
-[data-testid="stDownloadButton"] button:hover {
-    background: linear-gradient(135deg, #2980b9, #3498db) !important;
-    box-shadow: 0 6px 12px rgba(41, 128, 185, 0.3);
-    transform: translateY(-2px);
+/* Ép màu cho chữ bên trong nút (phần tử con) */
+[data-testid="stDownloadButton"] button p {
     color: white !important;
 }
 </style>
@@ -70,7 +72,7 @@ def predict_xgboost_output(input_array):
     output_original = np.expm1(output_log)
     return output_original.flatten()
 
-st.title("Force-Displacement Curve Prediction")
+st.title("Load-Displacement Curve Prediction")
 st.markdown("Using Hybrid XGBoost Model to predict the structural capacity of steel columns.")
 
 col1, col2, col3 = st.columns(3)
@@ -90,13 +92,13 @@ with col2:
 
 with col3:
     st.subheader("3. Chart Settings")
-    max_di = st.number_input("Maximum Displacement (mm)", value=15.0, step=1.0)
     step_size = st.number_input("Displacement Step (mm)", value=0.2, step=0.1)
 
 st.markdown("---")
 
 if st.button("PLOTTING RESULTS", type="primary", use_container_width=True):
     with st.spinner('Calculating...'):
+        max_di = 15.0
         num_steps = int(max_di / step_size) + 1
         di_range = np.linspace(0, max_di, num_steps)
         di_range = np.round(di_range, 2)
@@ -116,7 +118,7 @@ if st.button("PLOTTING RESULTS", type="primary", use_container_width=True):
         res_col1, res_col2 = st.columns([2, 1])
         
         with res_col1:
-            st.markdown("### Force-Displacement Curve")
+            st.markdown("### Load-Displacement Curve")
             
             import matplotlib.font_manager as fm
             from matplotlib.ticker import MultipleLocator
@@ -127,7 +129,7 @@ if st.button("PLOTTING RESULTS", type="primary", use_container_width=True):
             
             fig, ax = plt.subplots(figsize=(7, 5))
             
-            ax.plot(di_range, pi_pred, color='Red', linestyle='-', linewidth=1.5, label='XGBoost Surrogate')
+            ax.plot(di_range, pi_pred, color='Red', linestyle='-', linewidth=1.5)
             
             max_force = np.max(pi_pred)
             ax.set_xlim(0, max_di)
@@ -157,7 +159,7 @@ if st.button("PLOTTING RESULTS", type="primary", use_container_width=True):
             st.download_button(
                 label="📥 Download Data (.csv)",
                 data=csv,
-                file_name=f'Force_Displacement_Curve.csv',
+                file_name=f'Load_Displacement_Curve.csv',
                 mime='text/csv',
                 use_container_width=True
             )
